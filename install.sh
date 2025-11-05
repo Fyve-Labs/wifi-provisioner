@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env sh
+set -eu
 
 # install.sh — Install wifi-provisioner binary (Linux arm64)
 #
