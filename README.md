@@ -37,6 +37,26 @@ nmcli device wifi connect <SSID> password <PASSWORD>
     - `sudo setcap cap_net_raw,cap_net_admin+eip ./wifi-provisioner`
     - You might still need permissions for `nmcli` under PolicyKit; running with `sudo` is usually easiest.
 
+## Install (Linux arm64)
+You can install the prebuilt Linux arm64 binary directly from GitHub Releases using this one-liner:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Fyve-Labs/wifi-provisioner/main/install.sh | sudo sh
+```
+
+- This installs to /usr/local/bin by default. It fetches the latest release for linux/arm64.
+- To install a specific version (example v1.2.3):
+  ```bash
+  curl -fsSL https://raw.githubusercontent.com/Fyve-Labs/wifi-provisioner/main/install.sh | sudo VERSION=v1.2.3 sh
+  ```
+- Without sudo (install to a writable directory):
+  ```bash
+  BIN_DIR="$HOME/.local/bin" NO_SUDO=1 curl -fsSL https://raw.githubusercontent.com/Fyve-Labs/wifi-provisioner/main/install.sh | sh
+  ```
+- Checksums are verified against the release checksums.txt by default. To skip verification set VERIFY=0.
+
+If you prefer to build from source, follow the steps below.
+
 ## Setup
 1. Install Go 1.25+.
 2. Ensure BlueZ and NetworkManager (`nmcli`) are installed and running.
@@ -76,6 +96,7 @@ nmcli device wifi connect <SSID> password <PASSWORD>
   - Log verbosity
 
 ## Scripts
+- install.sh: install the prebuilt linux/arm64 binary from GitHub Releases into your PATH. See the Install section for curl | sh usage.
 - release.sh: calculate next version from Fyve-Labs/wifi-provisioner tags and create/push a new tag to trigger GitHub Release.
   - Usage:
     - ./release.sh [patch|minor|major] [-y] [--no-push] [--dry-run]
