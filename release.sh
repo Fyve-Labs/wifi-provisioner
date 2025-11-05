@@ -46,19 +46,21 @@ while (( "$#" )); do
 done
 
 # Fetch latest tag from upstream repo
-# We sort by version (descending) and pick the first matching v* tag.
-LATEST_TAG=$(git ls-remote --tags --sort=-v:refname "$UPSTREAM_REPO_URL" 'v[0-9]*.[0-9]*.[0-9]*' \
-  | awk '{print $2}' \
-  | sed -E 's#\^\{\}$##' \
-  | head -n1)
+# List all vX.Y.Z tags, normalize, version-sort and pick the latest.
+LATEST_TAG_NAME=$(
+  git ls-remote --tags "$UPSTREAM_REPO_URL" 'v[0-9]*.[0-9]*.[0-9]*' 2>/dev/null \
+    | awk '{print $2}' \
+    | sed -E 's#\^\{\}$##; s#^refs/tags/##' \
+    | awk '{orig=$0; gsub(/^v/, "", $0); split($0,a,/[.]/); printf "%03d.%03d.%03d %s\n", a[1]+0, a[2]+0, a[3]+0, orig}' \
+    | sort \
+    | tail -n1 \
+    | awk '{print $2}'
+) || true
 
-if [[ -z "${LATEST_TAG}" ]]; then
+if [[ -z "${LATEST_TAG_NAME}" ]]; then
   echo "No existing tags found in upstream. Defaulting to v0.0.0" >&2
-  LATEST_TAG="refs/tags/v0.0.0"
+  LATEST_TAG_NAME="v0.0.0"
 fi
-
-# Extract tag name (strip refs/tags/)
-LATEST_TAG_NAME=${LATEST_TAG#refs/tags/}
 
 # Strip leading v and split into components
 VERSION=${LATEST_TAG_NAME#v}
@@ -78,7 +80,7 @@ case "$BUMP" in
     MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
   *)
     echo "Invalid bump type: $BUMP" >&2; exit 1 ;;
-fi
+esac
 
 NEXT_TAG="v${MAJOR}.${MINOR}.${PATCH}"
 
