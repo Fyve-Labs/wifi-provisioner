@@ -20,8 +20,8 @@ We publish a .deb package that installs the binary and boot-time autostart compo
 
 Install:
 ```bash
-wget https://github.com/Fyve-Labs/wifi-provisioner/releases/download/v0.0.3/wifi-provisioner_0.0.3_arm64.deb
-sudo dpkg -i wifi-provisioner_0.0.3_arm64.deb
+wget https://github.com/Fyve-Labs/wifi-provisioner/releases/download/v0.0.4/wifi-provisioner_0.0.4_arm64.deb
+sudo dpkg -i wifi-provisioner_0.0.4_arm64.deb
 ```
 
 ## Install via script (Linux arm64)
