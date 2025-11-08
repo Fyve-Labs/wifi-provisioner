@@ -41,29 +41,6 @@ If you don’t use Debian packages, you can install the prebuilt Linux arm64 bin
 curl -fsSL https://raw.githubusercontent.com/Fyve-Labs/wifi-provisioner/main/install.sh | sudo sh
 ```
 
-- This installs to /usr/local/bin by default. It fetches the latest release for linux/arm64.
-- To install a specific version (example v1.2.3):
-  ```bash
-  curl -fsSL https://raw.githubusercontent.com/Fyve-Labs/wifi-provisioner/main/install.sh | sudo VERSION=v1.2.3 sh
-  ```
-- Without sudo (install to a writable directory):
-  ```bash
-  BIN_DIR="$HOME/.local/bin" NO_SUDO=1 curl -fsSL https://raw.githubusercontent.com/Fyve-Labs/wifi-provisioner/main/install.sh | sh
-  ```
-- Checksums are verified against the release checksums.txt by default. To skip verification set VERIFY=0.
-
-If you prefer to build from source, follow the steps below.
-
-## Setup
-1. Install Go 1.25+.
-2. Ensure BlueZ and NetworkManager (`nmcli`) are installed and running.
-3. Clone and build:
-   ```bash
-   git clone <your-repo-url>.git
-   cd wifi-provisioner2
-   go build -o wifi-provisioner ./
-   ```
-
 ## Run
 - Run with sudo so BLE advertise and nmcli can work without extra configuration:
   ```bash
@@ -111,7 +88,6 @@ Notes:
     - ./release.sh [patch|minor|major] [-y] [--no-push] [--dry-run]
     - Default bump is patch. Use -y to skip confirmation.
     - Example: ./release.sh minor -y
-
 
 ## Security notes
 - Password is not logged, but it is passed as a command argument to `nmcli`. On some systems, process arguments may be visible to other users. Running on a single-purpose device (e.g., provisioner on a Pi) mitigates risk. Consider alternatives (e.g., stdin or files with restricted permissions) if needed.
