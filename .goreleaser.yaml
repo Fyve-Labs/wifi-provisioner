@@ -4,7 +4,6 @@ project_name: wifi-provisioner
 
 before:
   hooks:
-    # Ensure modules and dependencies are tidy before building
     - go mod tidy
 
 builds:
@@ -32,6 +31,35 @@ archives:
 
 checksum:
   name_template: 'checksums.txt'
+
+nfpms:
+  - id: deb
+    package_name: wifi-provisioner
+    vendor: Fyve Labs
+    homepage: https://github.com/Fyve-Labs/wifi-provisioner
+    maintainer: Fyve Labs <viet@fyve.dev>
+    license: MIT
+    description: "BLE-based Wi‑Fi provisioner that configures NetworkManager via nmcli."
+    formats: [ deb ]
+    builds:
+      - wifi-provisioner
+    bindir: /usr/local/bin
+    file_name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}'
+    recommends:
+      - network-manager
+      - bluez
+    contents:
+      - src: packaging/scripts/check-connectivity-and-provision.sh
+        dst: /usr/local/bin/check-connectivity-and-provision.sh
+        file_info:
+          mode: 0755
+      - src: packaging/systemd/wifi-provisioner-autostart.service
+        dst: /lib/systemd/system/wifi-provisioner-autostart.service
+        file_info:
+          mode: 0644
+    scripts:
+      postinstall: packaging/scripts/postinstall.sh
+      postremove: packaging/scripts/postremove.sh
 
 changelog:
   use: git

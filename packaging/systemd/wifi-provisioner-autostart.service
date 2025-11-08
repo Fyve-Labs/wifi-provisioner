@@ -1,0 +1,13 @@
+[Unit]
+Description=Check internet on boot and start Wi‑Fi Provisioner if offline
+After=network-online.target bluetooth.target
+Wants=network-online.target bluetooth.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/check-connectivity-and-provision.sh
+# A small delay can help on slow boots;
+ExecStartPre=/bin/sleep 10
+
+[Install]
+WantedBy=multi-user.target
