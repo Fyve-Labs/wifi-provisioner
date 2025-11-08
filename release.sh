@@ -6,6 +6,7 @@ set -euo pipefail
 # This script looks up the latest semantic version tag (vX.Y.Z)
 # from the upstream repo Fyve-Labs/wifi-provisioner, calculates the
 # next version according to the requested bump (patch|minor|major),
+# updates the .deb install instructions in README.md to the next version,
 # then optionally tags the current repository and pushes the tag to origin.
 #
 # Usage:
@@ -71,6 +72,9 @@ MAJOR=${MAJOR:-0}
 MINOR=${MINOR:-0}
 PATCH=${PATCH:-0}
 
+# Remember current version (pre-bump)
+CURRENT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+
 case "$BUMP" in
   patch)
     PATCH=$((PATCH + 1)) ;;
@@ -82,14 +86,19 @@ case "$BUMP" in
     echo "Invalid bump type: $BUMP" >&2; exit 1 ;;
 esac
 
-NEXT_TAG="v${MAJOR}.${MINOR}.${PATCH}"
+NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+NEXT_TAG="v${NEXT_VERSION}"
 
 echo "Upstream latest tag: ${LATEST_TAG_NAME}"
 echo "Requested bump:      ${BUMP}"
 echo "Next tag to release: ${NEXT_TAG}"
 
+echo "Will update README.md install instructions:"
+echo "  /releases/download/v${CURRENT_VERSION}/ → /releases/download/v${NEXT_VERSION}/"
+echo "  wifi-provisioner_${CURRENT_VERSION}_arm64.deb → wifi-provisioner_${NEXT_VERSION}_arm64.deb"
+
 if [[ "$DRY_RUN" == "true" ]]; then
-  echo "Dry run enabled. No tag will be created or pushed."
+  echo "Dry run enabled. No tag will be created or pushed, and README.md will not be modified."
   exit 0
 fi
 
@@ -101,11 +110,25 @@ fi
 
 # Confirm
 if [[ "$ASSUME_YES" != "true" ]]; then
-  read -r -p "Create and push tag ${NEXT_TAG} to origin? [y/N] " REPLY
+  read -r -p "Update README.md and create/push tag ${NEXT_TAG} to origin? [y/N] " REPLY
   case "$REPLY" in
     y|Y|yes|YES) : ;;
     *) echo "Aborted."; exit 1 ;;
   esac
+fi
+
+# Update README.md deb install instructions to next version
+if [[ -f README.md ]]; then
+  echo "Updating README.md with new version ${NEXT_VERSION} ..."
+  perl -i -pe "s#/releases/download/v\Q${CURRENT_VERSION}\E/#/releases/download/v${NEXT_VERSION}/#g; s#wifi-provisioner_\Q${CURRENT_VERSION}\E_#wifi-provisioner_${NEXT_VERSION}_#g" README.md
+  if git diff --quiet -- README.md; then
+    echo "Note: README.md did not change (patterns not found)." >&2
+  else
+    git add README.md
+    git commit -m "docs: update README install snippet to v${NEXT_VERSION}"
+  fi
+else
+  echo "README.md not found; skipping README update." >&2
 fi
 
 # Create annotated tag
