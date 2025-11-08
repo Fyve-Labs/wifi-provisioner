@@ -1,14 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# postinstall for wifi-provisioner .deb
-# Reload systemd units so newly installed service files are recognized.
-if command -v systemctl >/dev/null 2>&1; then
-  systemctl daemon-reload || true
-  echo "[wifi-provisioner] Installed systemd units. You may enable autostart with:\n  sudo systemctl enable  wifi-provisioner-autostart.service"
-fi
+AUTOSTART_SERVICE="wifi-provisioner-autostart.service"
 
-# Ensure helper script is executable (should already be via dpkg, but just in case)
-if [ -f /usr/local/bin/check-connectivity-and-provision.sh ]; then
-  chmod 755 /usr/local/bin/check-connectivity-and-provision.sh || true
-fi
+case "$1" in
+    configure)
+      # Enable a soft-blocked Bluetooth device on a Raspberry Pi
+      sudo rfkill unblock bluetooth
+
+      # Enable service and keep track of its state
+      if deb-systemd-helper --quiet was-enabled "$AUTOSTART_SERVICE"; then
+        deb-systemd-helper enable "$AUTOSTART_SERVICE" >/dev/null || true
+      fi
+
+      # Bounce service
+      if [ -d /run/systemd/system ]; then
+        systemctl --system daemon-reload >/dev/null || true
+      fi
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinstall called with unknown argument '$1'" >&2
+        exit 1
+    ;;
+esac

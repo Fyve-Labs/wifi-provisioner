@@ -25,7 +25,6 @@ What it installs:
 
 Install:
 ```bash
-# Download the .deb from the latest GitHub Release (replace VERSION with the latest version)
 wget https://github.com/Fyve-Labs/wifi-provisioner/releases/download/v0.0.2/wifi-provisioner_0.0.2_arm64.deb
 sudo dpkg -i wifi-provisioner_0.0.2_arm64.deb
 ```
@@ -90,7 +89,6 @@ Recommended workflow when connectivity is lost:
 - Once the device connects, future boots will skip starting the provisioner (because internet is up).
 
 Notes:
-- The .deb package intentionally does not install a persistent wifi-provisioner.service — the provisioner runs only when needed (i.e., when offline at boot).
 - If you want the system to also auto-recover during runtime link drops (without reboot), you can add your own NetworkManager dispatcher script that calls the helper on down/disconnected events.
 
 ### Mobile app pairing flow
@@ -98,10 +96,6 @@ Notes:
 - Write the SSID to characteristic `B1B0AC35-A253-4258-A5A5-A2A6A928B03B`.
 - Write the password to characteristic `C2C1BD48-B363-4369-B2B9-B3B8B5B6B4B3`.
 - On success, the device should attempt to join the network. Consider rebooting to ensure all services pick up the change.
-
-## Configuration
-- The app name and UUIDs are hardcoded in `main.go`.
-- Network connection is performed by `nmcli` using the received SSID/password.
 
 ## Environment variables
 - None currently.
@@ -117,49 +111,10 @@ Notes:
     - ./release.sh [patch|minor|major] [-y] [--no-push] [--dry-run]
     - Default bump is patch. Use -y to skip confirmation.
     - Example: ./release.sh minor -y
-- Common commands:
-  - Build: `go build -o wifi-provisioner ./`
-  - Run: `sudo ./wifi-provisioner`
-- TODO: Add helper scripts (e.g., `make run`, `make build`, systemd unit file) if desired.
 
-## Tests
-- There are no automated tests in this repository as of 2025-11-05.
-- Manual validation steps:
-  1. Start the program and confirm logs show advertising started.
-  2. From the mobile app, write SSID and password; confirm logs indicate both were received.
-  3. Check the output of the `nmcli` command in logs.
-  4. Verify the device connects to the target Wi‑Fi (`nmcli connection show --active`).
-- TODO: Introduce unit tests (e.g., factoring out `configureWiFi` to allow command injection/mocking) and BLE interaction tests via interfaces.
-
-## Troubleshooting
-- Advertising fails or permission errors:
-  - Try running with `sudo`.
-  - Ensure BlueZ is installed and the Bluetooth service is running.
-- `nmcli` fails with errors:
-  - Check that the SSID is in range; verify password.
-  - Review stderr printed by the program on failure.
-- Cannot see the device from phone:
-  - Power-cycle Bluetooth, ensure no other process is advertising with the same adapter.
-  - Ensure your phone supports BLE and the app uses the exact UUIDs listed above.
-- .deb/autostart logs and status:
-  - Check the boot-time checker logs: `journalctl -u wifi-provisioner-autostart.service -b`
-  - Follow live logs of the provisioner (when started by the helper): `journalctl -xe -f | grep wifi-provisioner`
-  - Manually run the helper to test logic: `sudo /usr/local/bin/check-connectivity-and-provision.sh`
-- Offline recovery flow:
-  - If the device lost connectivity, simply reboot. On boot, the helper will detect no internet and start the provisioner automatically.
 
 ## Security notes
 - Password is not logged, but it is passed as a command argument to `nmcli`. On some systems, process arguments may be visible to other users. Running on a single-purpose device (e.g., provisioner on a Pi) mitigates risk. Consider alternatives (e.g., stdin or files with restricted permissions) if needed.
-
-## License
-- No license file found.
-- TODO: Add a LICENSE file (e.g., MIT/Apache-2.0). Until then, usage terms are unspecified.
-
-## Roadmap / Ideas
-- Optional environment configuration for device name and UUIDs
-- Systemd service unit to run at boot until provisioned
-- Retry/backoff and better status feedback over BLE
-- Optional TinyGo build targets for MCUs (if applicable)
 
 ## Acknowledgements
 - BLE functionality is provided by `tinygo.org/x/bluetooth`.
