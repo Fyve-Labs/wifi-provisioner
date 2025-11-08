@@ -41,7 +41,7 @@ nfpms:
     license: MIT
     description: "BLE-based Wi‑Fi provisioner that configures NetworkManager via nmcli."
     formats: [ deb ]
-    builds:
+    ids:
       - wifi-provisioner
     bindir: /usr/local/bin
     file_name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}'

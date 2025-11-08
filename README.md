@@ -25,21 +25,14 @@ What it installs:
 
 Install:
 ```bash
-# Download the .deb from the latest GitHub Release (replace VERSION and ARCH if needed)
-wget https://github.com/Fyve-Labs/wifi-provisioner/releases/download/vX.Y.Z/wifi-provisioner_vX.Y.Z_arm64.deb
-sudo dpkg -i wifi-provisioner_vX.Y.Z_arm64.deb
-# Let systemd pick up the new unit (usually handled by postinstall):
-sudo systemctl daemon-reload
+# Download the .deb from the latest GitHub Release (replace VERSION with the latest version)
+wget https://github.com/Fyve-Labs/wifi-provisioner/releases/download/v0.0.2/wifi-provisioner_0.0.2_arm64.deb
+sudo dpkg -i wifi-provisioner_0.0.2_arm64.deb
 ```
 
 Enable at boot (so provisioning starts automatically when offline):
 ```bash
-sudo systemctl enable --now wifi-provisioner-autostart.service
-```
-
-To disable later:
-```bash
-sudo systemctl disable --now wifi-provisioner-autostart.service
+sudo systemctl enable wifi-provisioner-autostart.service
 ```
 
 ## Install via script (Linux arm64)
