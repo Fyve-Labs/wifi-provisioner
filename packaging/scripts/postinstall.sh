@@ -6,7 +6,9 @@ AUTOSTART_SERVICE="wifi-provisioner-autostart.service"
 case "$1" in
     configure)
       # Enable a soft-blocked Bluetooth device on a Raspberry Pi
-      sudo rfkill unblock bluetooth
+      if command -v rfkill >/dev/null 2>&1; then
+        sudo rfkill unblock bluetooth
+      fi
 
       # Enable service and keep track of its state
       if deb-systemd-helper --quiet was-enabled "$AUTOSTART_SERVICE"; then
