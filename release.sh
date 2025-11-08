@@ -93,12 +93,12 @@ echo "Upstream latest tag: ${LATEST_TAG_NAME}"
 echo "Requested bump:      ${BUMP}"
 echo "Next tag to release: ${NEXT_TAG}"
 
-echo "Will update README.md install instructions:"
-echo "  /releases/download/v${CURRENT_VERSION}/ → /releases/download/v${NEXT_VERSION}/"
-echo "  wifi-provisioner_${CURRENT_VERSION}_arm64.deb → wifi-provisioner_${NEXT_VERSION}_arm64.deb"
-
 if [[ "$DRY_RUN" == "true" ]]; then
-  echo "Dry run enabled. No tag will be created or pushed, and README.md will not be modified."
+  echo "Will update README.md install instructions:"
+  echo "  /releases/download/v${CURRENT_VERSION}/ → /releases/download/v${NEXT_VERSION}/"
+  echo "  wifi-provisioner_${CURRENT_VERSION}_arm64.deb → wifi-provisioner_${NEXT_VERSION}_arm64.deb"
+
+  echo "Dry run enabled. No tag will be created or pushed."
   exit 0
 fi
 
@@ -148,4 +148,4 @@ fi
 echo "Pushing tag $NEXT_TAG to origin ..."
 git push origin "$NEXT_TAG"
 
-echo "Done. GitHub Actions (if configured) should create a release for $NEXT_TAG."
+echo "Done."
