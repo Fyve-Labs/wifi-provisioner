@@ -25,8 +25,8 @@ What it installs:
 
 Install:
 ```bash
-wget https://github.com/Fyve-Labs/wifi-provisioner/releases/download/v0.0.2/wifi-provisioner_0.0.2_arm64.deb
-sudo dpkg -i wifi-provisioner_0.0.2_arm64.deb
+wget https://github.com/Fyve-Labs/wifi-provisioner/releases/download/v0.0.3/wifi-provisioner_0.0.3_arm64.deb
+sudo dpkg -i wifi-provisioner_0.0.3_arm64.deb
 ```
 
 Enable at boot (so provisioning starts automatically when offline):
