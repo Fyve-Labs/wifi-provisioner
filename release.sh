@@ -98,7 +98,7 @@ if [[ "$DRY_RUN" == "true" ]]; then
   echo "  /releases/download/v${CURRENT_VERSION}/ → /releases/download/v${NEXT_VERSION}/"
   echo "  wifi-provisioner_${CURRENT_VERSION}_arm64.deb → wifi-provisioner_${NEXT_VERSION}_arm64.deb"
 
-  echo "Dry run enabled. No tag will be created or pushed."
+  echo "Dry run enabled. No tag will be created."
   exit 0
 fi
 

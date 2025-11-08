@@ -18,20 +18,10 @@ nmcli device wifi connect <SSID> password <PASSWORD>
 ## Install via .deb (Debian/Ubuntu)
 We publish a .deb package that installs the binary and boot-time autostart components.
 
-What it installs:
-- /usr/local/bin/wifi-provisioner (the binary)
-- /usr/local/bin/check-connectivity-and-provision.sh (helper that checks internet and starts the provisioner when offline)
-- /lib/systemd/system/wifi-provisioner-autostart.service (runs the helper at boot; disabled by default)
-
 Install:
 ```bash
 wget https://github.com/Fyve-Labs/wifi-provisioner/releases/download/v0.0.3/wifi-provisioner_0.0.3_arm64.deb
 sudo dpkg -i wifi-provisioner_0.0.3_arm64.deb
-```
-
-Enable at boot (so provisioning starts automatically when offline):
-```bash
-sudo systemctl enable wifi-provisioner-autostart.service
 ```
 
 ## Install via script (Linux arm64)
