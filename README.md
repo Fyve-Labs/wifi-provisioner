@@ -15,28 +15,6 @@ When both SSID and password are written over BLE, the app stops advertising and 
 nmcli device wifi connect <SSID> password <PASSWORD>
 ```
 
-## Stack
-- Language: Go (module mode)
-- Go version: 1.25 (per go.mod)
-- Package manager: Go modules (go.mod, go.sum)
-- Libraries:
-  - `tinygo.org/x/bluetooth` (used for BLE; works on Linux via BlueZ)
-- Runtime/OS expectations:
-  - Linux with BlueZ (for BLE) and NetworkManager (`nmcli`) available
-- Entry point: `main.go` (package `main`)
-
-## Requirements
-- Hardware: Linux host with BLE (e.g., Raspberry Pi with onboard Bluetooth or a USB BLE dongle)
-- OS/software:
-  - BlueZ (Bluetooth stack)
-  - NetworkManager with `nmcli`
-  - Go 1.25+ toolchain
-- Permissions:
-  - BLE advertising and `nmcli` often require elevated privileges. Simplest is to run the binary with `sudo`.
-  - Alternatively, you may experiment with capabilities (example):
-    - `sudo setcap cap_net_raw,cap_net_admin+eip ./wifi-provisioner`
-    - You might still need permissions for `nmcli` under PolicyKit; running with `sudo` is usually easiest.
-
 ## Install via .deb (Debian/Ubuntu)
 We publish a .deb package that installs the binary and boot-time autostart components.
 
@@ -159,14 +137,6 @@ Notes:
   3. Check the output of the `nmcli` command in logs.
   4. Verify the device connects to the target Wi‑Fi (`nmcli connection show --active`).
 - TODO: Introduce unit tests (e.g., factoring out `configureWiFi` to allow command injection/mocking) and BLE interaction tests via interfaces.
-
-## Project structure
-```
-/ (repo root)
-├── go.mod
-├── go.sum
-└── main.go     # Entry point: BLE advertise + credentials handling + nmcli call
-```
 
 ## Troubleshooting
 - Advertising fails or permission errors:
